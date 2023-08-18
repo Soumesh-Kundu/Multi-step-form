@@ -1,8 +1,11 @@
 <template>
     <main class="flex flex-col h-full overflow-hidden">
+        <div v-if="isLoading">
+             Please Wait...
+        </div>
         <div class="flex flex-row items-center overflow-hidden duration-500 grow"
             :style="`transform: translateX(-${activeStep * 100 / questionsSteps.length}%); width: ${questionsSteps.length * 100}%`"
-            v-if="activeStep < (questionsSteps.length)">
+            v-if="activeStep < (questionsSteps.length) && !isLoading">
             <div class="relative grid grid-cols-3 duration-200 place-items-center" v-for="(item, index) in questionsSteps"
                 :key="item.ParentTag" :style="`width:${100 / questionsSteps.length}%`">
                 <nav class="w-full col-span-3 mx-5 my-3">
@@ -125,35 +128,13 @@ const totalQuestions = useState('totalQuestions', () => 0)
 //         options:[]
 //     },
 // ]
+const {app,mongo}=useRealm()
 
 const completedStage = ref(0)
-const questionsSteps = [
-    {
-        question: "Monaco is the smallest country in the world",
-        answer: "False",
-        tier: "Easy",
-        image:"https://images.unsplash.com/photo-1546448935-9d0f92876a03?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=436&q=80",
-        ParentTag: "Manchester City",
-        tags: ['Ronaldi']
-    },
-    {
-        question: "The atomic number for lithium is 17",
-        answer: "False",
-        tier: "Easy",
-        image:"https://imgk.timesnownews.com/story/Lithium_mining_iStock_1200.jpg?tr=w-600,h-450,fo-auto",
-        ParentTag: "Manchester City",
-        tags: ['Biases matuidi']
-    },
-    {
-        question: "Fish cannot blink",
-        answer: "True",
-        tier: "Medium",
-        image:"https://images.unsplash.com/photo-1578507065211-1c4e99a5fd24?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmV0dGElMjBmaXNofGVufDB8fDB8fHww&w=1000&q=80",
-        ParentTag: "Manchester City",
-        tags: ['Science']
-    }
-]
-totalQuestions.value = questionsSteps.length
+const questionsSteps = ref([])
+// totalQuestions.value = questionsSteps.value.length
+
+const isLoading=ref(false)
 
 function setNextStep() {
     if (completedStage.value === 5) {
@@ -173,6 +154,23 @@ function setPreviosStep() {
     }
     completedStage.value--
 }
+
+async function fetchCards(){
+    isLoading.value=true
+    totalQuestions.value=3
+    const Questions=mongo?.db('QuizGame')?.collection('questions')
+    questionsSteps.value=await Questions.find()
+    totalQuestions.value = questionsSteps.value.length
+    isLoading.value=false
+}
+async function cardInsert(){
+    const Questions=mongo?.db('QuizGame')?.collection('questions')
+    await Questions.insertMany(questionsSteps)
+    console.log('done')
+}
+onMounted(async ()=>{
+    await fetchCards()
+})
 const tags = useState('tags', () => [])
 tags.value = ["Nature", "Wild Life", 'Math', "Science", "Computer", "Space", "Star"]
 </script>

@@ -16,6 +16,9 @@
   "dependencies": {
     "@heroicons/vue": "^2.0.18",
     "@nuxtjs/tailwindcss": "^6.8.0",
-    "flowbite": "^1.8.1"
+    "abort-controller": "^3.0.0",
+    "flowbite": "^1.8.1",
+    "node-fetch": "^3.3.2",
+    "realm-web": "^2.0.0"
   }
 }
