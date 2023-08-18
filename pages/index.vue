@@ -70,7 +70,7 @@
                 </button>
             </div>
         </div>
-        <div v-else class="flex items-center justify-center grow">
+        <div v-if="questionsSteps.length>0 && activeStep>= questionsSteps?.length  && !isLoading" class="flex items-center justify-center grow">
             <div class="grid grid-cols-2 gap-14">
                 <Final :data="inputs" :setNextStep="setNextStep" />
             </div>
@@ -132,7 +132,6 @@ const {app,mongo}=useRealm()
 
 const completedStage = ref(0)
 const questionsSteps = ref([])
-// totalQuestions.value = questionsSteps.value.length
 
 const isLoading=ref(false)
 
