@@ -14,7 +14,7 @@
                             <CheckIcon class="w-10 h-10 text-primary-500" />
                         </span>
                         <span v-else
-                            class="ml-4 text-3xl font-bold">{{ totalCompleted === 0 ? 0 : Math.floor(totalCompleted * 100 / totalQuestions)
+                            class="ml-4 text-3xl font-bold">{{ Math.floor(totalCompleted * 100 / totalQuestions) || 0
                             }}<span class="text-base font-medium">%</span></span>
                     </div>
                     <span v-if="activeStep < totalQuestions">{{ totalCompleted || 0 }}/{{ totalQuestions }}</span>

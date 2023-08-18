@@ -5,7 +5,7 @@
         </a>
         <div class="p-5">
             <a href="#">
-                <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Q: {{ question }}</h5>
+                <h5 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Q: {{ question }}</h5>
             </a>
             <div class="w-full px-2 mt-2 mb-3">
                 <div class="font-semibold">Tier:
