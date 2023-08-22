@@ -13,8 +13,9 @@
                         <span v-if="activeStep >= totalQuestions">
                             <CheckIcon class="w-10 h-10 text-primary-500" />
                         </span>
-                        <span v-else
-                            class="ml-4 text-3xl font-bold">{{ Math.floor(totalCompleted * 100 / totalQuestions) || 0 }}<span class="text-base font-medium">%</span></span>
+                        <span v-else class="ml-4 text-3xl font-bold">{{ Math.floor(totalCompleted * 100 / totalQuestions) ||
+                            0
+                        }}<span class="text-base font-medium">%</span></span>
                     </div>
                     <span v-if="activeStep < totalQuestions">{{ totalCompleted || 0 }}/{{ totalQuestions }}</span>
                 </div>
@@ -46,7 +47,14 @@ const totalCompleted = computed(() => {
 
 </script>
 <style scoped>
+@property --percentage {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+}
+
 .progress {
+    transition: --percentage 500ms;
     background:
         radial-gradient(closest-side, white 89%, transparent 90% 100%),
         conic-gradient(#26873E var(--percentage), rgb(229, 231, 235) 0%);

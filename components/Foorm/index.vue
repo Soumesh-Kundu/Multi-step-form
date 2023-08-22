@@ -1,40 +1,48 @@
 <template>
-     <div class="flex flex-col items-center gap-5" >
-        <span class="font-semibold text-gray-500 ">Question {{ activeStep+1 }}</span>
+    <div class="flex flex-col items-center gap-5">
+        <span class="font-semibold text-gray-500 ">Question {{ activeStep + 1 }}</span>
         <h1 class="text-3xl font-semibold text-primary-500">{{ question }}</h1>
-        <FoormText v-if="type==='text'" :field='field' :placeHolder="placeHolder" :options="options" />
-        <FoormEmail v-if="type==='email'" :field='field' :placeHolder="placeHolder" :onInput="onBlurEmail" :valid='email' :options="options" />
-        <FoormNumber v-if="type==='number'" :field='field' :placeHolder="placeHolder" :options="options" />
-        <button v-if="type!=='email'" id="but" type="button" :disabled="data[field]?.length===0" @click="()=>{
-            if(data[field]?.length===0 || data[field]===undefined)return
-            setNextStep()}"
-            class="flex items-center gap-16 px-4 py-3 text-white bg-gray-300"
-            :class="{ '!bg-primary-500': data[field]?.toString().length > 0 }">
-            <span class="text-xs font-semibold">NEXT</span>
-            <ArrowLongRightIcon class="w-5 h-5 " />
-        </button>
-        <button v-else type="button" :disabled="(!email.valid || data[field]?.length === 0)" @click="()=>{
-            if(!email.valid || data[field]?.length === 0 || data[field]===undefined) return
-            setNextStep()}"
-            class="flex items-center gap-16 px-4 py-3 text-white bg-gray-300"
-            :class="{ '!bg-primary-500':(email.valid && data[field]?.length > 0) }">
-            <span class="text-xs font-semibold">NEXT</span>
-            <ArrowLongRightIcon class="w-5 h-5 " />
-        </button>
+        <FoormText v-if="type === 'text'" :field='field' :placeHolder="placeHolder" />
+        <FoormEmail v-if="type === 'email'" :field='field' :placeHolder="placeHolder" :onInput="onBlurEmail" :valid='email'
+         />
+        <FoormNumber v-if="type === 'number'" :field='field' :placeHolder="placeHolder"  />
+        <FoormCardIcon v-if="type === 'iconCard'" :field='field' :placeHolder="placeHolder" :options="options" :multiple="multiple ?? false" />
+        <FoormCardImage v-if="type === 'iconImage'" :field='field' :multiple="multiple ?? false" :placeHolder="placeHolder" :options="options" />
+        <FoormDropdown v-if="type === 'dropDown'" :field='field' :placeHolder="placeHolder" :options="options" />
+        <FoormRating v-if="type === 'rating'" :field='field' :placeHolder="placeHolder" :max="max" />
+        <div class="flex gap-2">
+            <button type="button" :disabled="activeStep<1" class="flex items-center gap-10 px-4 py-3 text-white bg-gray-700" @click="setPreviosStep" :class="{'!bg-gray-300':activeStep<1}">
+                <ArrowLongLeftIcon class="w-5 h-5" />
+                <span class="text-xs font-semibold">PREVIOS</span>
+            </button>
+            <button v-if="type !== 'email'" id="but" type="button" :disabled="data[field]?.length === 0" @click="() => {
+                if (data[field]?.length === 0 || data[field] === undefined) return
+                setNextStep(nextStepId)
+            }" class="flex items-center gap-16 px-4 py-3 text-white duration-300 bg-gray-300"
+                :class="{ '!bg-primary-500': data[field]?.toString().length > 0 }">
+                <span class="text-xs font-semibold">NEXT</span>
+                <ArrowLongRightIcon class="w-5 h-5 " />
+            </button>
+            <button v-else type="button" :disabled="(!email.valid || data[field]?.length === 0)" @click="() => {
+                if (!email.valid || data[field]?.length === 0 || data[field] === undefined) return
+                setNextStep(nextStepId)
+            }" class="flex items-center gap-16 px-4 py-3 text-white duration-300 bg-gray-300"
+                :class="{ '!bg-primary-500': (email.valid && data[field]?.length > 0) }">
+                <span class="text-xs font-semibold">NEXT</span>
+                <ArrowLongRightIcon class="w-5 h-5 " />
+            </button>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ArrowLongRightIcon } from '@heroicons/vue/24/outline'
-const { setNextStep,question,type,field,placeHolder,options } = defineProps(['question','type','options','placeHolder','field','setNextStep'])
+import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/24/outline'
+const { setNextStep, question, type, field, placeHolder, options,setPreviosStep,nextStepId,multiple,max } = defineProps(['question', 'type', 'options', 'placeHolder', 'field', 'setNextStep','setPreviosStep','nextStepId','multiple','max'])
 
 
-const activeStep=useState('activeStep')
-const data=useState('inputs')
-const email = ref({valid:true})
-watch(data.value['name'],()=>{
-    console.log(data.value['name'])
-})
+const activeStep = useState('activeStep')
+const data = useState('inputs')
+const email = ref({ valid: true })
 function onBlurEmail(e) {
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     if (!e.target.value.length) {
@@ -48,5 +56,7 @@ function onBlurEmail(e) {
     email.value.valid = true
     return
 }
-
+watchEffect(()=>{
+    console.log(data.value)
+})
 </script>
