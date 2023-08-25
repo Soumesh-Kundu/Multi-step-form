@@ -3,8 +3,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules:['@nuxtjs/tailwindcss'],
   runtimeConfig:{
-    public:{
-      appId:'',
-    }
+    appId:"",
+    collection:"",
+    db:"",
+    serverApiKey:""
+  },
+  app:{
+    // head:{
+    //   script:[{src:"https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js",async:true}]
+    // }
   }
 })

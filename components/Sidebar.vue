@@ -1,6 +1,6 @@
 <template>
     <aside id="default-sidebar"
-        class="fixed top-0 left-0 z-50 w-64 h-screen py-8 transition-transform -translate-x-full sm:translate-x-0"
+        class="fixed top-0 left-0 z-40 w-64 h-screen py-8 transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
         <div>
             <h1 class="px-8 text-3xl font-bold text-primary-500">Qualyval</h1>
@@ -21,14 +21,14 @@
                 </div>
             </div>
         </div>
-        <div class="h-full px-4 overflow-y-auto">
+        <!-- <div class="h-full px-4 overflow-y-auto">
             <ul class="space-y-2 ">
                 <li><span class="font-semibold">Today:</span> {{ totalCompleted || 0 }}</li>
                 <li><span class="font-semibold">Yesterday:</span> 25</li>
                 <li><span class="font-semibold">This week : </span> 120</li>
                 <li><span class="font-semibold">This month: </span> 568</li>
             </ul>
-        </div>
+        </div> -->
     </aside>
 </template>
 

@@ -10,7 +10,7 @@
 const {field,placeHolder,valid,onInput}=defineProps(['field','placeHolder','valid','onInput'])
 const data = useState('inputs')
 onMounted(()=>{
-    if (data[field]?.length > 0) {
+    if (data.value[field]?.length > 0) {
         const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (!data.value[field].length) {
             valid.valid = true

@@ -1,8 +1,8 @@
 <template>
-    <div class="flex items-center gap-8">
-        <div v-for="(item,index) in options" class="flex flex-col overflow-hidden overflow-x-auto font-medium text-gray-500 duration-200 border-2 border-gray-300 rounded-md cursor-pointer" :style="`width:${options.length<=3?16:16-0.25*options.length}rem`" @click="setCard(item.name)" :class="{'bg-white border-primary-500 text-primary-500':checkIsThere(item.name)}">
-            <img :src="item.image" :alt="`Card Image ${index+1}`" class="w-full aspect-[8/9] ">
-            <div class="grid w-full py-6 place-items-center">
+    <div class="flex items-center gap-8 my-5">
+        <div v-for="(item,index) in options" class="flex flex-col w-40 overflow-hidden overflow-x-auto font-medium text-gray-500 duration-300 border-2 border-gray-300 rounded-md cursor-pointer hover:scale-105" @click="setCard(item.name)" :class="{'bg-white border-primary-500 text-primary-500 !scale-110':checkIsThere(item.name)}">
+            <img :src="item.image" :alt="`Card Image ${index+1}`" class="w-full aspect-square">
+            <div class="grid w-full py-4 place-items-center">
                 <p>{{ item.name }}</p>
             </div>
         </div>
