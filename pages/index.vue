@@ -26,14 +26,14 @@
                     :setPreviosStep="setPreviosStep" />
             </div>
             <div class="flex items-center justify-center grow" :style="`width:${100 / (questionsSteps.length + 1)}%`">
-                <div class="grid grid-cols-3 gap-14 place-items-center">
+                <div class="grid w-full grid-cols-3 place-items-center">
                     <button type="button" :disabled="activeStep < 1"
-                        class="flex items-center gap-10 px-4 py-3 text-white bg-gray-700" @click="setPreviosStep"
+                        class="flex items-center gap-10 px-4 py-3 text-white bg-gray-700 " @click="setPreviosStep"
                         :class="{ '!bg-gray-300': activeStep < 1 }">
                         <ArrowLongLeftIcon class="w-5 h-5" />
                         <span class="text-xs font-semibold">PREVIOS</span>
                     </button>
-                    <Final :questionSteps="questionsSteps" nameField="name" />
+                    <Final :questionSteps="questionsSteps" nameField="name" class=" grow" />
                     <button id="but" type="button" @click="onSubmit"
                         class="flex items-center gap-16 px-4 py-3 text-white duration-300 bg-primary-500">
                         <span class="text-xs font-semibold">SUBMIT</span>
@@ -76,6 +76,8 @@ import { Modal } from 'flowbite';
 const activeStep = useState('activeStep', () => 0)
 const inputs = useState('inputs', () => ({}))
 const totalQuestions = useState('totalQuestions')
+
+// steppers List : add steppers name here to see in the stepper bar 
 const steppers = ref([
     'Personal',
     'Cards',
@@ -88,6 +90,10 @@ const modal=ref(null)
 const ModalRef = ref(null)
 const completedStage = ref(0)
 const currentStepId = ref(1)
+
+//Question List: (most important) add question as a object in the particuler sturtured as written in the documentation
+
+//types: text | number | email | imageCard | iconCard | rating | date | dropDown | file
 const questionsSteps = ref([
     {
         question: 'What is your name',

@@ -1,7 +1,7 @@
 <template>
-    <div class="border-b-2 border-gray-300 my-14 w-72" :class="{'!border-red-500':!valid.valid}">
+    <div class="my-8 border-b-2 border-gray-300 w-60 lg:w-72" :class="{'!border-red-500':!valid.valid}">
         <input type="number" id="first_name" ref="emailRef" 
-            class="text-xl w-full font-semibold appearance-none border-none focus:border-none bg-slate-100 focus:ring-0 text-gray-500  placeholder:text-gray-400  focus:outline-non  !px-0"
+            class="text-lg lg:text-xl w-full font-semibold appearance-none border-none focus:border-none bg-slate-100 focus:ring-0 text-gray-500  placeholder:text-gray-400  focus:outline-non  !px-0"
             :placeholder="placeHolder" v-model.number="data[field]" @input="onInput">
     </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div class="w-full" >
         <h2 class="text-2xl ">Data inserted by: <span class="text-primary-500">{{ data[nameField] }}</span> </h2>
         <div class="mt-10">
             Data inputs:

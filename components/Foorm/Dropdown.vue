@@ -2,7 +2,7 @@
     <div class="flex items-center gap-3 mb-5 border-b-2 border-b-gray-500">
 
         <input ref="dropDownButton"
-            class="w-full text-xl font-semibold text-gray-500 border-none focus:border-none bg-slate-100 focus:ring-0 placeholder:text-gray-400 focus:outline-non "
+            class="w-full text-lg font-semibold text-gray-500 border-none lg:text-xl focus:border-none bg-slate-100 focus:ring-0 placeholder:text-gray-400 focus:outline-none "
             type="text" @focus="() => { dropDown.show() }" @input="() => { data[field] = '' }" v-model="searchInput"
             :placeholder="placeHolder" />
     </div>
