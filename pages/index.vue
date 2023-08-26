@@ -192,6 +192,7 @@ const questionsSteps = ref([
         type: "file",
         multiple: true,
         stageId:6,
+        //placeHolder required for file input becasue it is using as the content of the file button
         placeHolder: 'Choose a file',
         field: 'files',
     },
