@@ -25,7 +25,8 @@
                     :questionQueue="questionQueue" :setNextStep="setNextStep" v-bind="item"
                     :setPreviosStep="setPreviosStep" />
             </div>
-            <div class="flex items-center justify-center grow" :style="`width:${100 / (questionsSteps.length + 1)}%`">
+            <div class="flex flex-col items-center justify-center grow" :style="`width:${100 / (questionsSteps.length + 1)}%`">
+                <Final :questionSteps="questionsSteps" nameField="name" class="" />
                 <div class="flex items-center gap-5">
                     <button type="button" :disabled="activeStep < 1"
                         class="flex items-center gap-10 px-4 py-3 text-white bg-gray-700 " @click="setPreviosStep"
@@ -33,7 +34,6 @@
                         <ArrowLongLeftIcon class="w-5 h-5" />
                         <span class="text-xs font-semibold">PREVIOS</span>
                     </button>
-                    <Final :questionSteps="questionsSteps" nameField="name" class=" grow" />
                     <button id="but" type="button" @click="onSubmit"
                         class="flex items-center gap-16 px-4 py-3 text-white duration-300 bg-primary-500">
                         <span class="text-xs font-semibold">SUBMIT</span>
@@ -173,10 +173,8 @@ certificate`,
     },
     {
         question: 'National Insurance Number',
-        boolean: true,
-        disabledWhen: 'no',
-        yesContent: "I have that",
-        noContent: "I don't have that",
+        optional: true,
+        opContent:`I don't have it`,
         type: "number",
         placeHolder: 'Your insurance number',
         field: 'InsuraceNumber',
@@ -263,7 +261,7 @@ certificate`,
         question: 'Do you have a student or postgraduate loan ?',
         type: 'iconCard',
         skipOn: 'no',
-        skipTo: 'end',
+        skipTo: 15,
         stageId: 3,
         field: 'student Loan',
         options: [
@@ -282,7 +280,7 @@ certificate`,
         question: 'Do any of the below following statements apply',
         type: 'iconCard',
         skipOn: 'yes',
-        skipTo: 'end',
+        skipTo: 15,
         field: 'Loan state',
         stageId: 3,
         options: [
@@ -353,6 +351,12 @@ master’s course on or after 1 August 2017 / you lived in England or Wales and 
 postgraduate doctoral course on or after 1 August 2018 </p>`,
         }
     },
+    {
+        question:"Upload P45 and/or latest Payslip",
+        type:'file',
+        field:'payslip',
+        placeHolder:'Upload P45 / Paylip'
+    }
 ])
 totalQuestions.value = questionsSteps.value.length
 

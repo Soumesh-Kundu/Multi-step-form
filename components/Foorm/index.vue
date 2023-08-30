@@ -5,41 +5,34 @@
         <div class="max-w-2xl text-center">
             {{ description }}
         </div>
-        <div v-if="boolean" class="flex gap-3 my-2">
-            <div @click="onYes" class="flex items-center gap-2 p-1">
-                <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded " :checked="check === 'yes'" disabled>
-                <label for="">
-                    Yes, {{ yesContent }}
-                </label>
-            </div>
-            <div @click="onNo" class="flex items-center gap-2 p-1">
+        <div v-if="optional" class="flex gap-3 my-2 cursor-pointer">
+            <div @click="onClick" class="flex items-center gap-2 p-1">
                 <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded "
-                    :checked="check === 'no'" disabled>
-                <label for="">
-                    No, {{ noContent }}
+                    :checked="check" disabled>
+                <label for="" class="cursor-pointer">
+                    {{ opContent }}
                 </label>
             </div>
-
         </div>
-        <FoormText :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormText :class="{ 'pointer-events-none': optional && check }"
             v-if="type === 'text'" :field='field' :placeHolder="placeHolder" />
-        <FoormEmail :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormEmail :class="{ 'pointer-events-none': optional && check }"
             v-if="type === 'email'" :field='field' :placeHolder="placeHolder" :onInput="onBlurEmail" :valid='email' />
-        <FoormNumber :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormNumber :class="{ 'pointer-events-none': optional && check }"
             v-if="type === 'number'" :field='field' :placeHolder="placeHolder" :onInput="onBlurNumber" :valid="number" />
-        <FoormCardIcon :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormCardIcon :class="{ 'pointer-events-none': optional && check }"
             v-if="type === 'iconCard'" :questionQueue="questionQueue" :skipOn="skipOn" :skipTo="skipTo" :field='field' :placeHolder="placeHolder" :options="options"
             :multiple="multiple ?? false" />
-        <FoormCardImage :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormCardImage :class="{ 'pointer-events-none': optional && !check }"
             v-if="type === 'imageCard'" :field='field' :multiple="multiple ?? false" :placeHolder="placeHolder"
             :options="options" />
-        <FoormDropdown :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }" 
+        <FoormDropdown :class="{ 'pointer-events-none': optional && check }" 
         v-if="type === 'dropDown'"  :refering="refering" :field='field' :placeHolder="placeHolder" :options="options" :refer="refer" />
-        <FoormRating :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormRating :class="{ 'pointer-events-none': optional && check }"
             v-if="type === 'rating'" :field='field' :placeHolder="placeHolder" :max="max" />
-        <FoormFile :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormFile :class="{ 'pointer-events-none': optional && check }"
             v-if="type === 'file'" :field='field' :placeHolder="placeHolder" :multiple="multiple ?? false" />
-        <FoormDate :class="{ 'pointer-events-none': boolean && (check === disabledWhen || check.length < 1) }"
+        <FoormDate :class="{ 'pointer-events-none': optional && check }"
             v-if="type === 'date'" :field='field' :placeHolder="format" />
         <div class="flex gap-2">
             <button type="button" :disabled="activeStep < 1"
@@ -48,27 +41,25 @@
                 <ArrowLongLeftIcon class="w-5 h-5" />
                 <span class="text-xs font-semibold">PREVIOS</span>
             </button>
-            <button v-if="type === 'email'" type="button" :disabled="(!email.valid || data[field]?.length === 0)" @click="() => {
-                if (!email.valid || data[field]?.length === 0 || data[field] === undefined) return
+            <button v-if="type === 'email'" type="button" :disabled="(!email.valid || data[field]?.length === 0) && !check" @click="() => {
                 setNextStep()
             }" class="flex items-center gap-12 px-3 py-2 text-white duration-300 bg-gray-300 lg:gap-16 lg:px-4 lg:py-3"
-                :class="{ '!bg-primary-500': (email.valid && data[field]?.length > 0) }">
+                :class="{ '!bg-primary-500': (email.valid && data[field]?.length > 0) || check }">
                 <span class="text-xs font-semibold">NEXT</span>
                 <ArrowLongRightIcon class="w-5 h-5 " />
             </button>
-            <button v-if="type === 'number'" type="button" :disabled="(!number.valid || data[field]?.length === 0)" @click="() => {
-                if (!number.valid || data[field]?.length === 0 || data[field] === undefined) return
+            <button v-if="type === 'number'" type="button" :disabled="(!number.valid || data[field]?.length === 0) && !check" @click="() => {
+                console.log('hello')
                 setNextStep()
             }" class="flex items-center gap-12 px-3 py-2 text-white duration-300 bg-gray-300 lg:gap-16 lg:px-4 lg:py-3"
-                :class="{ '!bg-primary-500': (number.valid && data[field]?.toString()?.length > 0) }">
+                :class="{ '!bg-primary-500': (number.valid && data[field]?.toString()?.length > 0) || check }">
                 <span class="text-xs font-semibold">NEXT</span>
                 <ArrowLongRightIcon class="w-5 h-5 " />
             </button>
-            <button v-if="!/number|email/.test(type)" type="button" :disabled="data[field]?.length === 0" @click="() => {
-                if (data[field]?.length === 0 || data[field] === undefined) return
+            <button v-if="!/number|email/.test(type)" type="button" :disabled="data[field]?.length === 0 && !check" @click="() => {
                 setNextStep()
             }" class="flex items-center gap-12 px-3 py-2 text-white duration-300 bg-gray-300 lg:gap-16 lg:px-4 lg:py-3"
-                :class="{ '!bg-primary-500': data[field]?.toString().length > 0 }">
+                :class="{ '!bg-primary-500': data[field]?.toString().length > 0 || check }">
                 <span class="text-xs font-semibold">NEXT</span>
                 <ArrowLongRightIcon class="w-5 h-5 " />
             </button>
@@ -84,7 +75,7 @@
 
 <script setup>
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/24/outline'
-const { setNextStep, question, type, field, placeHolder, options, setPreviosStep, multiple, max, format, validation, boolean, disabledWhen, skipOn, skipTo, questionQueue, refer, yesContent, noContent, details,booleanOption, description,refering } = defineProps(['question', 'type', 'options', 'placeHolder', 'field', 'setNextStep', 'setPreviosStep', 'multiple', 'max', 'format', 'validation', 'boolean', 'disabledWhen', 'skipOn', 'skipTo', 'questionQueue', 'refer', 'yesContent', 'noContent', 'details','booleanOption','description','refering'])
+const { setNextStep, question, type, field, placeHolder, options, setPreviosStep, multiple, max, format, validation, optional, disabledWhen, skipOn, skipTo, questionQueue, refer, opContent, details,booleanOption, description,refering } = defineProps(['question', 'type', 'options', 'placeHolder', 'field', 'setNextStep', 'setPreviosStep', 'multiple', 'max', 'format', 'validation', 'optional', 'disabledWhen', 'skipOn', 'skipTo', 'questionQueue', 'refer', 'opContent', 'details','booleanOption','description','refering'])
 
 const activeStep = useState('activeStep')
 const data = useState('inputs')
@@ -108,10 +99,9 @@ function onBlurNumber(e) {
         return
     }
     number.value.valid = true
-    console.log(data.value[field])
     return
 }
-const check = ref("")
+const check = ref(false)
 function onBlurEmail(e) {
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     if (!e.target.value.length) {
@@ -125,36 +115,7 @@ function onBlurEmail(e) {
     email.value.valid = true
     return
 }
-function onYes() {
-    check.value = 'yes'
-    if (disabledWhen === 'yes') {
-        data.value[field] = 'yes'
-    }
-    else {
-        if (multiple) return data.value[field] = []
-        data.value[field] = ''
-    }
-    if (skipOn === 'yes') {
-        questionQueue.next = skipTo === "end" ? totalQuestions.value : skipTo
-    }
-    else {
-        questionQueue.next = questionQueue.curr + 1
-    }
-}
-function onNo() {
-    check.value = 'no'
-    if (disabledWhen === 'no') {
-        data.value[field] = 'no'
-    }
-    else {
-        if (multiple) return data.value[field] = []
-        data.value[field] = ''
-    }
-    if (skipOn === 'no') {
-        questionQueue.next = skipTo === "end" ? totalQuestions.value : skipTo
-    }
-    else {
-        questionQueue.next = questionQueue.curr + 1
-    }
+function onClick() {
+    check.value = !check.value
 }
 </script>

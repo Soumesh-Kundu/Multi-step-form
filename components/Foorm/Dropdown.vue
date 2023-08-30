@@ -67,7 +67,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style >
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     background: #fcf5f5;
