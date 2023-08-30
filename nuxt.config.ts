@@ -9,8 +9,5 @@ export default defineNuxtConfig({
     serverApiKey:""
   },
   app:{
-    // head:{
-    //   script:[{src:"https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js",async:true}]
-    // }
   }
 })

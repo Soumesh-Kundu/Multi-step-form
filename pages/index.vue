@@ -11,7 +11,7 @@
                         </span>
                     </li>
                     <li v-if="index < (steppers.length - 1)" class="inline-block h-[2px] bg-gray-300 "
-                        :style="`width:${(100 / steppers.length) - (steppers.length * 1.5)}%`">
+                        :style="`width:${(100 / steppers.length) - (steppers.length * 2)}%`">
 
                     </li>
                 </template>
@@ -21,12 +21,12 @@
             :style="`transform: translateX(-${activeStep * 100 / (questionsSteps.length + 1)}%); width: ${(questionsSteps.length + 1) * 100}%`">
             <div class="relative grid duration-200 place-items-center" v-for="(item, index) in questionsSteps"
                 :key="item.field" :style="`width:${100 / (questionsSteps.length + 1)}%`">
-                <Foorm :class="{ '-translate-y-[40%] 2xl:translate-y-0': /date/.test(item.type) }" class=""
-                    :nextStepId="questionsSteps[index + 1]?.stageId" :setNextStep="setNextStep" v-bind="item"
+                <Foorm :class="{ '-translate-y-[40%] 2xl:translate-y-0': /date/.test(item.type) }"
+                    :questionQueue="questionQueue" :setNextStep="setNextStep" v-bind="item"
                     :setPreviosStep="setPreviosStep" />
             </div>
             <div class="flex items-center justify-center grow" :style="`width:${100 / (questionsSteps.length + 1)}%`">
-                <div class="grid w-full grid-cols-3 place-items-center">
+                <div class="flex items-center gap-5">
                     <button type="button" :disabled="activeStep < 1"
                         class="flex items-center gap-10 px-4 py-3 text-white bg-gray-700 " @click="setPreviosStep"
                         :class="{ '!bg-gray-300': activeStep < 1 }">
@@ -70,23 +70,27 @@
 </template>
 
 <script setup>
-import { UserIcon, UserGroupIcon, BriefcaseIcon, ArrowLongLeftIcon, ArrowLongRightIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+import IconMale from '@/components/Icon/Male';
+import IconFemale from '@/components/Icon/Female';
+import { ArrowLongLeftIcon, ArrowLongRightIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { CheckCircleIcon } from '@heroicons/vue/24/solid'
 import { Modal } from 'flowbite';
 const activeStep = useState('activeStep', () => 0)
 const inputs = useState('inputs', () => ({}))
 const totalQuestions = useState('totalQuestions')
-
+const questionQueue = ref({
+    prev: [null],
+    curr: 0,
+    next: 1
+})
 // steppers List : add steppers name here to see in the stepper bar 
 const steppers = ref([
-    'Personal',
-    'Cards',
-    'Review',
-    'Country',
-    'Others'
+    'Personal Details',
+    'Employe Statement',
+    'Student Loans'
 ])
 
-const modal=ref(null)
+const modal = ref(null)
 const ModalRef = ref(null)
 const completedStage = ref(0)
 const currentStepId = ref(1)
@@ -96,155 +100,316 @@ const currentStepId = ref(1)
 //types: text | number | email | imageCard | iconCard | rating | date | dropDown | file
 const questionsSteps = ref([
     {
-        question: 'What is your name',
+        question: 'Last name',
         type: "text",
-        placeHolder: 'Your name',
-        field: 'name',
+        placeHolder: 'Your last name',
+        field: 'lastname',
         stageId: 1,
-        options: []
     },
     {
-        question: 'What is your email',
-        type: "email",
-        placeHolder: 'Your email',
-        field: 'email',
+        question: 'First name',
+        description: `Do not enter initials or shortened names for example,
+Jim for James or Liz for Elizabeth`,
+        type: "text",
+        placeHolder: 'Your first name',
+        field: 'firstname',
         stageId: 1,
-        options: []
     },
     {
-        question: 'Choose a Field',
-        type: "imageCard",
-        placeHolder: 'Your name',
-        field: 'Select 1',
-        multiple: false,
-        stageId: 2,
-        options: [
-            {
-                image: 'https://images.unsplash.com/photo-1609393919580-6410fe845398?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDN8anIxWGRvWFBuWWN8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-                name: "Ice Water"
-            },
-            {
-                image: "https://images.unsplash.com/photo-1683650006376-4a0f184e9ee4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
-                name: "Flooded Water"
-            },
-            {
-                image: "https://cdn.fstoppers.com/styles/full/s3/photos/2019/02/857ebd7658e56c84a4dc65cc4453a305.jpg?itok=rpCL6_UU",
-                name: "Forest"
-            },
-        ]
-    },
-    {
-        question: 'Choose a Field',
+        question: 'What is your gender',
         type: "iconCard",
-        placeHolder: 'Your name',
-        field: 'Select',
-        multiple: true,
-        stageId: 2,
+        description: `As shown on your birth certificate or gender recognition
+certificate`,
+        placeHolder: '',
+        field: 'gender',
+        stageId: 1,
         options: [
             {
-                icon: UserIcon,
-                name: "User"
+                icon: IconMale,
+                name: "Male"
             },
             {
-                icon: UserGroupIcon,
-                name: "Group"
-            },
-            {
-                icon: BriefcaseIcon,
-                name: "Work"
-            },
+                icon: IconFemale,
+                name: "Female"
+            }
         ]
     },
     {
-        question: 'Give us a Rating',
-        type: "rating",
-        placeHolder: '',
-        field: 'review',
-        stageId: 4,
-        max: 5
+        question: "Date of birth",
+        type: 'date',
+        format: 'dd/mm/yyyy',
+        stageId: 1,
+        field: "DOB"
     },
     {
-        question: 'What is your Country',
-        type: "dropDown",
-        placeHolder: 'Your Country',
+        question: 'Which Country are you from',
+        type: 'dropDown',
+        placeHolder: "Your country",
+        stageId: 1,
+        refering: 'city',
         field: 'country',
-        stageId:5,
-        options: ['India', "Russia", "America", "France", "England", "United Kingdom", "Japan", "Spain", "Italy"]
+        options: ['India', "USA", 'UK', 'France']
     },
     {
-        question: 'What is your phone',
+        question: 'Which City are you from',
+        type: 'dropDown',
+        placeHolder: 'Your city',
+        refer: 'country',
+        field: 'city',
+        options: {
+            'India': ['Delhi', 'Mumbai', 'Kolkata', 'Chennai'],
+            'USA': ['New York', 'Chicago', 'Boston', 'Los Angeles'],
+            'UK': ['Birmingham', 'Belfast', 'Cambridge', 'Liverpool'],
+            'France': ['Paris', 'Strasborg', 'Versailles', 'Lyon']
+        },
+        stageId: 1,
+    },
+    {
+        question: 'Home Address',
+        type: "text",
+        placeHolder: 'Your address',
+        field: 'address',
+        stageId: 1,
+    },
+    {
+        question: 'National Insurance Number',
+        boolean: true,
+        disabledWhen: 'no',
+        yesContent: "I have that",
+        noContent: "I don't have that",
         type: "number",
-        placeHolder: 'Your phone',
-        field: 'phone',
-        validation:/^[6-9]\d{9}$/,
-        stageId:6,
-        options: []
+        placeHolder: 'Your insurance number',
+        field: 'InsuraceNumber',
+        stageId: 1,
     },
     {
-        question: 'Choose a Date',
+        question: 'Employment start date',
         type: "date",
         format: 'dd/mm/yyyy',
-        stageId:6,
-        field: 'date',
+        field: 'Emp_Start_date',
+        stageId: 1,
     },
     {
-        question: 'Choose a File',
-        type: "file",
+        question: 'Do you have another job?',
+        type: 'iconCard',
+        skipOn: 'yes',
+        skipTo: 12,
+        field: "Have another Job",
+        options: [
+            {
+                icon: CheckIcon,
+                name: "Yes"
+            },
+            {
+                icon: XMarkIcon,
+                name: "No"
+            },
+        ],
+        stageId: 2,
+        details: {
+            'Yes means': `<p><span class="font-semibold">Tax Code BR</span> - I have another job and/or I am in receipt
+    of a State, workplace or private pension.</p>`,
+        }
+    },
+    {
+        question: 'Do you receive payments from a State,workplace or private pension?',
+        type: 'iconCard',
+        skipOn: 'yes',
+        skipTo: 12,
+        field: 'receiving payments from State,workpalace or private pension',
+        stageId: 2,
+        options: [
+            {
+                icon: CheckIcon,
+                name: "Yes"
+            },
+            {
+                icon: XMarkIcon,
+                name: "No"
+            },
+        ],
+        details: {
+            'Yes means': `<p><span class="font-semibold">Tax Code BR</span> - I have another job and/or I am in receipt
+    of a State, workplace or private pension.</p>`,
+        }
+    },
+    {
+        question: 'Since 6 April have you received payments ?',
+        type: 'iconCard',
+        field: 'receiving payments since 6 april',
+        stageId: 2,
+        options: [
+            {
+                icon: CheckIcon,
+                name: "Yes"
+            },
+            {
+                icon: XMarkIcon,
+                name: "No"
+            },
+        ],
+        details: {
+            'Yes means': `<p><span class="font-semibold">Current personal allowance
+    on a Week 1/Month 1 basis</span> - Since 6 April I have had another job
+    but I do not have a P45. And/or since
+    the 6 April I have received payments from Jobseeker’s Allowance or Employment and Support Allowance or Incapacity Benefit</p>`,
+            'No means': `<p> <span class="font-semibold">Current personal allowance
+    </span> - This is my first job since 6 April and
+    since the 6 April I have not received
+    payments from Jobseeker’s Allowance or Employment and Support Allowance or Incapacity Benefit  </p>`,
+        }
+    },
+    {
+        question: 'Do you have a student or postgraduate loan ?',
+        type: 'iconCard',
+        skipOn: 'no',
+        skipTo: 'end',
+        stageId: 3,
+        field: 'student Loan',
+        options: [
+            {
+                icon: CheckIcon,
+                name: "Yes"
+            },
+            {
+                icon: XMarkIcon,
+                name: "No"
+            },
+        ],
+
+    },
+    {
+        question: 'Do any of the below following statements apply',
+        type: 'iconCard',
+        skipOn: 'yes',
+        skipTo: 'end',
+        field: 'Loan state',
+        stageId: 3,
+        options: [
+            {
+                icon: CheckIcon,
+                name: "Yes"
+            },
+            {
+                icon: XMarkIcon,
+                name: "No"
+            },
+        ],
+        details: {
+            "Statements 1": `<p>
+                you’re still studying on a course that your
+                student loan relates to
+                </p>`,
+            'Statement 2': `<p>
+                    you completed or left your course after the
+                    start of the current tax year, which started
+                    on 6 April
+                    </p>`,
+            'Statement 3': `<p>
+                        you’ve already repaid your loan in full
+                        </p>`,
+            'Statement 4': `<p>
+                            you’re paying the Student Loans Company
+                            by Direct Debit from your bank to manage
+                            your end of loan repayments
+                            </p>`
+        }
+    },
+    {
+        question: `Select which plans do you have`,
+        description: `To avoid repaying more than you need to, tick the
+correct student loan or loans that you have – use the
+guidance on the below to help you`,
+        type: 'iconCard',
+        field: 'plans',
+        stageId: 3,
         multiple: true,
-        stageId:6,
-        //placeHolder required for file input becasue it is using as the content of the file button
-        placeHolder: 'Choose a file',
-        field: 'files',
+        options: [
+            {
+                name: "Plan 1"
+            },
+            {
+                name: "Plan 2"
+            },
+            {
+                name: "Plan 4"
+            },
+            {
+                name: "Postgraduate loan"
+            },
+        ],
+        details: {
+            'Plan 1': `<p>you lived in Northern Ireland when you started
+your course / you lived in England or Wales and started your course
+before 1 September 2012</p>`,
+            'Plan 2': `<p>You lived in England or Wales and started your course
+on or after 1 September 2012</p>`,
+            'Plan 4': `<p>You lived in Scotland and applied through the
+Students Award Agency Scotland (SAAS) when you started
+your course.</p>`,
+            'Postgraduate loan': `<p> you lived in England and started your postgraduate
+master’s course on or after 1 August 2016 / you lived in Wales and started your postgraduate
+master’s course on or after 1 August 2017 / you lived in England or Wales and started your
+postgraduate doctoral course on or after 1 August 2018 </p>`,
+        }
     },
 ])
 totalQuestions.value = questionsSteps.value.length
 
-function setNextStep(stepperId) {
-    if (activeStep.value === (questionsSteps.value.length - 1)) {
+function setNextStep() {
+    if (activeStep.value === (questionsSteps.value.length - 1) || questionQueue.value.next === totalQuestions.value) {
         completedStage.value++
     }
-    if (currentStepId.value < stepperId) {
-        completedStage.value++
-        currentStepId.value = stepperId
+    else {
+        const stepperId = questionsSteps.value[questionQueue.value.next].stageId
+        while (currentStepId.value < stepperId) {
+            completedStage.value++
+            currentStepId.value++
+            console.log(currentStepId.value)
+        }
     }
-    activeStep.value++
+
+    activeStep.value = questionQueue.value.next
+    questionQueue.value.prev.push(questionQueue.value.curr)
+    questionQueue.value.next = questionQueue.value.next + 1
+    questionQueue.value.curr = activeStep.value
     return
 }
 function setPreviosStep() {
-    activeStep.value--
-}
-function clear() {
-    activeStep.value = 0
-    completedStage.value = 0
-    inputs.value = {}
+    activeStep.value = questionQueue.value.prev.pop()
+    questionQueue.value.next = questionQueue.value.curr
+    questionQueue.value.curr = activeStep.value
 }
 async function onSubmit() {
     const formData = new FormData()
     modal.value.show()
     for (const [props, value] of Object.entries(inputs.value)) {
+        if (value.length < 1) {
+            continue
+        }
         if (Array.isArray(value) && value[0]?.name !== undefined) {
-            console.log('hello')
             for (const file of value) {
                 formData.append(props, file, file.name)
             }
             continue
         }
-        console.log(props)
-        console.log(value)
         formData.append(props, value)
     }
     const { data } = await useFetch('/api/send', {
         method: 'POST',
         body: formData,
-        onResponse(){
+        onResponse() {
             modal.value.hide()
             navigateTo('complete')
+        },
+        onResponseError(){
+            modal.value.hide()
         }
     })
 }
 
 useHead({
-    script: questionsSteps.value.find(item => item.type === 'date') && [{ src: "https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js", async: true }],
+    script: questionsSteps?.value.find(item => item.type === 'date') && [{ src: "https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js", async: true }],
 })
 onMounted(() => {
     const $targetEl = ModalRef.value
@@ -254,7 +419,7 @@ onMounted(() => {
         backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
         closable: true,
     };
-    modal.value=new Modal($targetEl,options)
+    modal.value = new Modal($targetEl, options)
 })
 </script>
 

@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import {iconsPlugin,getIconCollections} from '@egoist/tailwindcss-icons'
 module.exports = {
   content: [
     "./components/**/*.{js,vue,ts}",
@@ -74,6 +75,9 @@ module.exports = {
     },
   },
   plugins: [
+    iconsPlugin({
+      collections:getIconCollections(['mdi'])
+    }),
     require('flowbite/plugin')
   ],
 }

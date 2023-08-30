@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
         return { status: "done" }
     } catch (error) {
         console.log(error)
-        return { hello: "world" }
+        setResponseStatus(500,event)
+        return { error: "Internal server Error" }
     }
 })

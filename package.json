@@ -14,7 +14,9 @@
     "nuxt": "^3.6.5"
   },
   "dependencies": {
+    "@egoist/tailwindcss-icons": "^1.1.0",
     "@heroicons/vue": "^2.0.18",
+    "@iconify-json/mdi": "^1.1.54",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "abort-controller": "^3.0.0",
     "flowbite": "^1.8.1",

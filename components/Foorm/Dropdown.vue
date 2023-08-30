@@ -3,11 +3,11 @@
 
         <input ref="dropDownButton"
             class="w-full text-lg font-semibold text-gray-500 border-none lg:text-xl focus:border-none bg-slate-100 focus:ring-0 placeholder:text-gray-400 focus:outline-none "
-            type="text" @focus="() => { dropDown.show() }" @input="() => { data[field] = '' }" v-model="searchInput"
+            type="text" @focus="() => { dropDown.show() }" @input="() => { data[field] = '' }" v-model="searchInput[field]"
             :placeholder="placeHolder" />
     </div>
     <div ref="dropDownList" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 ">
-        <ul v-if="filterOptions.length > 0"
+        <ul v-if="filterOptions?.length > 0"
             class="flex flex-col gap-2 py-2 overflow-auto text-gray-700 max-h-48 custom-scrollbar">
             <li v-for="item in filterOptions" :key="item" class="cursor-pointer" @click="onClick(item)">
                 <span class="px-3 py-2 font-medium ">{{ item }}</span>
@@ -22,20 +22,39 @@
 <script setup>
 import { Dropdown } from 'flowbite'
 
-const { options, field, placeHolder } = defineProps(['options', 'field', 'placeHolder'])
+const { options, field, placeHolder, refer, refering } = defineProps(['options', 'field', 'placeHolder', 'refer', 'refering'])
 const data = useState('inputs')
 
-const searchInput = ref("")
-const filterOptions = computed(() => {
-    if (searchInput.value.length < 1) {
+const allOptions = computed(() => {
+    if (refer) {
+        return options[data.value[refer]]
+    }
+    else {
         return options
     }
-    const search = new RegExp(`^${searchInput.value}`, 'i')
-    return options.filter(item => search.test(item))
+})
+// watchEffect(()=>{
+//     if(field==='refering' && data.value[field].length<1){
+//         searchInput.value=""
+//         console.log('changes refering')
+//     }
+// })
+const searchInput = useState('searchInput',()=>({}))
+searchInput.value[field]=""
+const filterOptions = computed(() => {
+    if (searchInput.value[field].length < 1) {
+        return allOptions.value
+    }
+    const search = new RegExp(`^${searchInput.value[field]}`, 'i')
+    return allOptions.value.filter(item => search.test(item))
 })
 function onClick(item) {
     data.value[field] = item
-    searchInput.value = item
+    searchInput.value[field] = item
+    if(refering!==undefined){
+        data.value[refering]=""
+        searchInput.value[refering]=""
+    }
     dropDown.value.hide()
 }
 const dropDownButton = ref(null)
@@ -64,4 +83,5 @@ onMounted(() => {
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #bdbdbd;
     border-radius: 30px;
-}</style>
+}
+</style>
